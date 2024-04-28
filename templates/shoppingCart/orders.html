@@ -1,0 +1,120 @@
+{% extends 'common/base.html' %} {% block title %} My Orders {%endblock%}
+{%block content %}
+{% load custFilters %}
+
+<div class="py-3 py-md-4 bg-light">
+  <div class="container">
+    <div class="row">
+      <h3 class="mb-3 main-title">My Orders</h3>
+      {%if severity == 'warning'%}
+      <div class="alert alert-warning mt-3" role="alert">{{msg}}</div>
+      {% elif severity == 'success'%}
+      <div class="alert alert-success mt-3" role="alert">{{msg}}</div>
+      {% endif%}
+
+      {% if response|arrayLen %}
+      <div class="col-md-12 d-flex flex-column orders-container">
+        {% for order in response%}
+        <div class="row order">
+          <div class="col-sm-6 col-12 order-info">
+            <div class="col-sm-12 col-12 d-flex flex-row">
+              <label><strong>Order No #:</strong></label>
+              <div>{{order.order_no}}</div>
+            </div>
+            <div class="col-sm-12 col-12 d-flex flex-row">
+              <label><strong>Date:</strong></label>
+              <div>{{order.order_date}}</div>
+            </div>
+            <div class="col-sm-12 col-12 d-flex flex-row">
+              <label><strong>Payment Mode:</strong></label>
+              <div>{{order.payment_mode}}</div>
+            </div>
+            <div class="col-sm-12 col-12 d-flex flex-row">
+              <label><strong>Status:</strong></label>
+              <div>{{order.status}}</div>
+            </div>
+            {% if user.is_superuser %}
+            <div class="col-sm-12 col-12 d-flex flex-column">
+              <label><strong>Change Status:</strong></label>
+              <div class="change-status col-sm-12 col-12 d-flex flex-column">
+                <form method="post" action="/orders/">
+                  {%csrf_token%}
+                  <input type="hidden" value="{{order.order_no}}" name="order_id" />
+                  <div class="col-sm-3 col-12 d-flex flex-row">
+                    <input type="radio" name="status" value="Delivered" />
+                    <label>Is Delivered?</label>
+                  </div>
+                  <div class="col-sm-3 col-12 d-flex flex-row">
+                    <input type="radio" name="status" value="Rejected" />
+                    <label>Is Rejected?</label>
+                  </div>
+                  <div class="col-sm-6 col-12 d-flex flex-row">
+                    <button type="submit" class="btn btn-primary">
+                      Submit
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            {%endif%}
+          </div>
+          <div class="col-sm-6 col-12 m-auto order-conformation-right">
+            <!-- Heading -->
+            <div class="order-conformation-right-heading">
+              <i class="fa fa-shopping-bag" aria-hidden="true"></i>
+              <h5>Your order</h5>
+              <div class="order-conformation-right-heading-order">
+                <span>{{order.total_items}}</span>
+              </div>
+            </div>
+            <!-- Items-->
+            <div class="order-conformation-right-items">
+              {% for item in order.items%}
+              <div class="order-conformation-right-items-item">
+                <div class="col-md-10 order-conformation-right-items-item-left">
+                  <img src="/media/{{item.image}}" alt="{{item.name}}" />
+                  <div class="order-conformation-right-items-item-left-title">
+                    <a href="/product/detail/{{item.slug}}"
+                      ><h5>{{item.name}}</h5></a
+                    >
+                    <div
+                      class="order-conformation-right-items-item-left-title-qty"
+                    >
+                      {{item.quantity}} x {{item.price}}
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2 order-conformation-right-items-item-right">
+                  <i class="fa fa-inr"></i> {{item.subtotal}}
+                </div>
+              </div>
+              {%endfor%}
+            </div>
+            <!-- End Items -->
+            <div class="order-conformation-right-amount d-flex flex-row">
+              <div class="col-md-10">Subtotal</div>
+              <div class="col-md-2"><i class="fa fa-inr"></i> {{order.subtotal}}</div>
+            </div>
+            <div class="order-conformation-right-amount d-flex flex-row">
+              <div class="col-md-10">Shipping</div>
+              <div class="col-md-2">Flat rate</div>
+            </div>
+            <div
+              class="order-conformation-right-amount order-conformation-right-amount-top-border d-flex flex-row"
+            >
+              <div class="col-md-10"><strong>Total</strong></div>
+              <div class="col-md-2">
+                <strong
+                  ><i class="fa fa-inr"></i> {{order.subtotal}}</strong
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        {%endfor%}
+      </div>
+      {%endif%}
+    </div>
+  </div>
+</div>
+{% endblock %}

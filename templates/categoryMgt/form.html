@@ -1,0 +1,33 @@
+{% extends 'common/base-without-footer.html' %} 
+{% block title %} {{title}} {% endblock %} 
+{% block content %}
+<div class="container">
+  <div
+    class="card shadow-lg p-3 mb-5 bg-body rounded center-of-page small-card"
+  >
+    <h4 class="text-center mb-3">{{title}}</h4>
+    {% if form.errors %}
+    <div class="alert alert-danger" role="alert">Error</div>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-container">
+        {{ field.label_tag }} {{ field }} {% for error in field.errors %}
+        <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endfor %} {% if field.help_text %}
+        <div class="form-text">{{ field.help_text }}</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <div class="form-container btn">
+        <button type="submit">Submit</button>
+        <a href="/category/list" class="ms-2">
+          <button type="button" class="btn btn-secondary">Cancel</button>
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+

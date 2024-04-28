@@ -1,0 +1,116 @@
+{% extends 'common/base.html' %} {% block title %} Order confirmation{%endblock%} 
+{%block content %}
+
+<div class="py-3 py-md-4 bg-light">
+  <div class="container">
+    {% if not response.order_no%}
+    <div class="row">
+      <div class="alert alert-info" role="alert">
+        No order placed recently.
+        <a href="/" class="alert-link">Continue Shopping</a>.
+      </div>
+    </div>
+    {%else%}
+
+    <div class="row order-conformation">
+      <h3 class="mb-3 main-title">Order Confirmation</h3>
+      <div class="col-md-8 order-conformation-left">
+        <div class="order-conformation-left-number">
+          <i class="fa fa-check-circle-o" aria-hidden="true"></i>
+          <div class="order-conformation-left-number-info">
+            <div class="order-conformation-left-info-no">
+              Order #{{response.order_no}}
+            </div>
+            <h5>Thank you {{user}}!</h5>
+          </div>
+        </div>
+        <div class="order-conformation-left-info">
+          <h5>Order Updates</h5>
+          <p>You will receive order and shipping updates via email.</p>
+        </div>
+        <div class="order-conformation-left-contact">
+          <div class="order-conformation-left-contact-title">Contact</div>
+          <div class="order-conformation-left-contact-address">
+            <div>Address</div>
+            <div>
+              Iftekhar Ahmad <br />
+              D 64 street no 4 <br />
+              New Govind Pura <br />
+              Near: Gandhi Park <br />
+              Delhi 110051
+            </div>
+          </div>
+          <div
+            class="order-conformation-left-contact-address order-conformation-left-contact-address-top-border">
+            <div>Payment</div>
+            <div>{{response.payment_mode}}</div>
+          </div>
+        </div>
+        <div class="order-conformation-left-help">
+          <div class="order-conformation-left-help-link">
+            <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+            <span>Need help </span> <a href="/">Contact Us</a>
+          </div>
+          <div class="order-conformation-left-help-btn">
+            <a href="/">
+              <button type="button" class="btn btn-dark">Continue shopping</button>
+            </a>
+          </div>
+        </div>
+      </div>
+      <!-- End Left section-->
+
+      <div class="col-md-4 order-conformation-right">
+        <!-- Heading -->
+        <div class="order-conformation-right-heading">
+          <i class="fa fa-shopping-bag" aria-hidden="true"></i>
+          <h5>Your order</h5>
+          <div class="order-conformation-right-heading-order">
+            <span>{{response.total_items}}</span>
+          </div>
+        </div>
+        <!-- Items-->
+        <div class="order-conformation-right-items">
+          {% for item in response.items%}
+          <div class="order-conformation-right-items-item">
+            <div class="col-md-10 order-conformation-right-items-item-left">
+              <img src="/media/{{item.image}}" alt="{{item.name}}" />
+              <div class="order-conformation-right-items-item-left-title">
+                <a href="/product/detail/{{item.slug}}"><h5>{{item.name}}</h5></a>
+                <div class="order-conformation-right-items-item-left-title-qty">
+                  {{item.quantity}} x {{item.price}}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2 order-conformation-right-items-item-right">
+              <i class="fa fa-inr"></i> {{item.subtotal}}
+            </div>
+          </div>
+          {%endfor%}
+        </div>
+        <!-- End Items -->
+        <div class="order-conformation-right-amount d-flex flex-row">
+          <div class="col-md-10">Subtotal</div>
+          <div class="col-md-2"><i class="fa fa-inr"></i> {{response.subtotal}}</div>
+        </div>
+        <div class="order-conformation-right-amount d-flex flex-row">
+          <div class="col-md-10">Shipping</div>
+          <div class="col-md-2">Flat rate</div>
+        </div>
+        <div
+          class="order-conformation-right-amount order-conformation-right-amount-top-border d-flex flex-row"
+        >
+          <div class="col-md-10"><strong>Total</strong></div>
+          <div class="col-md-2">
+            <strong><i class="fa fa-inr"></i> {{response.subtotal}}</strong>
+          </div>
+        </div>
+        <!-- End amount-->
+      </div>
+      <!-- End Right section -->
+    </div>
+    <!-- End Order confirmation -->
+  </div>
+  {%endif%}
+</div>
+{% endblock %}

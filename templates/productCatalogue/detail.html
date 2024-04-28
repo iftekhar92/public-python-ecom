@@ -1,0 +1,122 @@
+{% extends 'common/base.html' %} {% block title %} {% if product %}
+{{product.name}} {%else%} Page not found {%endif%} {%endblock%} 
+{% block content%} 
+
+<div class="py-3 py-md-4 bg-light">
+  <div class="container">
+    <div class="row">
+      {% if product %}
+      <h3 class="mb-3 main-title">{{product.name}}</h3>
+      {%if severity == 'error'%}
+      <div class="alert alert-danger mt-1" role="alert">{{msg}}</div>
+      {% elif severity == 'success'%}
+      <div class="alert alert-success mt-1" role="alert">
+        {{msg}} <a href="/cart" class="alert-link">Go to Cart</a>
+      </div>
+      {% endif%}
+
+      <div class="col-md-5 mt-3">
+        <div class="bg-white border product-view-img-section">
+          {% if product.quantity > 0 %}
+          <label class="product-qty bg-warning"
+            ><strong>Qty:</strong> {{product.quantity}}</label
+          >
+          {%endif%}
+          <img
+            src="/media/{{product.image}}"
+            class="w-100"
+            alt="{{product.name}}"
+          />
+        </div>
+      </div>
+      <div class="col-md-7 mt-3">
+        <div class="product-view">
+          <h4 class="product-name">
+            {{product.name}} {% if product.quantity > 0 %}
+            <label class="label-stock bg-success">In Stock</label>
+            {%else%}
+            <label class="label-stock bg-danger">Out Of Stock</label>
+            {%endif%}
+          </h4>
+          <hr />
+          <p class="product-path">
+            Home / Category / Product / {{product.category.name}}
+          </p>
+          <div>
+            <span class="selling-price"
+              ><i class="fa fa-inr"></i> {{product.price}}</span
+            >
+            <span class="original-price"
+              ><i class="fa fa-inr"></i> {{product.old_price}}</span
+            >
+          </div>
+          <form
+            method="post"
+            class="d-flex flex-column"
+            action="/product/detail/{{product.slug}}"
+          >
+            <div class="mt-2">
+              <div class="input-group">
+                {% csrf_token%}
+                <input type="hidden" name="product_id" value="{{product.id}}" />
+                <span
+                  class="btn btn1"
+                  onclick="qtyHandler('minus', 'input-quantity')"
+                  ><i class="fa fa-minus"></i
+                ></span>
+                <input
+                  name="qty"
+                  type="number"
+                  value="1"
+                  class="input-quantity"
+                  id="input-quantity"
+                  min="1"
+                  required
+                />
+                <span
+                  class="btn btn1"
+                  onclick="qtyHandler('plus', 'input-quantity')"
+                  ><i class="fa fa-plus"></i
+                ></span>
+              </div>
+            </div>
+            <div class="mt-2">
+              {% if product.quantity > 0 %}
+              <button type="submit" class="btn btn1">
+                <i class="fa fa-shopping-cart"></i> Add To Cart
+              </button>
+              {%else%}
+              <button type="submit" class="btn btn1 disabled">
+                <i class="fa fa-shopping-cart"></i> Add To Cart
+              </button>
+              {%endif%}
+            </div>
+          </form>
+          <div class="mt-3">
+            <h5 class="mb-0">Short Description</h5>
+            <p>{{product.short_description}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 mt-3">
+        <div class="card">
+          <div class="card-header bg-white">
+            <h4>Description</h4>
+          </div>
+          <div class="card-body">
+            <p>{{product.description}}</p>
+          </div>
+        </div>
+      </div>
+      {%else%}
+      <div class="alert alert-danger mt-1" role="alert">
+        Product does not exist.
+      </div>
+      {%endif%}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

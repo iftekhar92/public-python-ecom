@@ -1,0 +1,69 @@
+{% extends 'common/base.html' %} {% block title %} Product List {% endblock %}
+{% block content %} 
+{% load custFilters %}
+<div class="py-3 py-md-4 bg-light">
+  <div class="container">
+    <div class="row">
+      <h3 class="main-title no-margin">Product List:</h3>
+      <div class="d-flex justify-content-end mb-1 mt-1">
+        <a href="/product/create">
+          <button type="button" class="btn btn-primary">Create New</button>
+        </a>
+      </div>
+      <table class="table table-striped">
+        <thead class="table-dark">
+          <th>ID</th>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Slug</th>
+          <th>Price</th>
+          <th>Old Price</th>
+          <th>Quantity</th>
+          <th>Is New?</th>
+          <th>Is Featured?</th>
+          <th>Category</th>
+          <th>Action</th>
+        </thead>
+        <tbody>
+          {% if products %} {% for product in products %}
+          <tr>
+            <td>{{product.id}}</td>
+            <td>
+              <img
+                src="/media/{{product.image}}"
+                class="img-thumbnail"
+                alt="{{product.name}}"
+                width="150"
+              />
+            </td>
+            <td>{{product.name}}</td>
+            <td>{{product.slug}}</td>
+            <td>{{product.price}}</td>
+            <td>{{product.old_price}}</td>
+            <td>{{product.quantity}}</td>
+            <td>{{product.is_new|parseBoolData}}</td>
+            <td>{{product.is_featured|parseBoolData}}</td>
+            <td>{{product.category.name}}</td>
+            <td>
+              <a title="Update" href="/product/update/{{product.id}}"
+                ><i class="fa fa-pencil fa-lg"></i
+              ></a>
+              <a
+                title="Remove"
+                href="/product/delete/{{product.id}}"
+                class="ms-2"
+                ><i class="fa fa-remove fa-lg"></i
+              ></a>
+            </td>
+          </tr>
+          {% endfor %} {%else%}
+          <tr>
+            <td colspan="11">No record found.</td>
+          </tr>
+          {%endif%}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

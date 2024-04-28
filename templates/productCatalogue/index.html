@@ -1,0 +1,157 @@
+{% extends 'common/base.html' %} {% block title %} Product Catalogue {%endblock%} 
+{% block content %} 
+{% load custFilters %}
+<div class="py-3 py-md-4 bg-light">
+  <div class="container">
+    {%if severity == 'error'%}
+    <div class="alert alert-danger mt-1" role="alert">{{msg}}</div>
+    {% elif severity == 'success'%}
+    <div class="alert alert-success mt-1" role="alert">
+      {{msg}} <a href="/cart" class="alert-link">Go to Cart</a>
+    </div>
+    {% endif%} 
+    {% if not products%}
+    <p>No product is available</p>
+    {%endif%}
+  </div>
+
+  {% if products %}
+  <div class="col-md-12 d-flex">
+    <div class="col-md-3 ps-3 pe-3">
+      <div class="container">
+        <div class="row">
+          <form action="/" method="post" class="form-filter">
+            {% csrf_token %}
+            <!-- Filter by latest products  -->
+            <fieldset class="form-group border rounded-3 p-3">
+              <legend class="float-none w-auto px-3">
+                Filter by latest products
+              </legend>
+              <div class="form-group">
+                <input
+                  type="checkbox"
+                  name="is_new"
+                  id="is_new"
+                  value="1"
+                  {{default_checked.is_new}}
+                />
+                <label for="is_new">Is New?</label>
+              </div>
+              <div class="form-group">
+                <input
+                  type="checkbox"
+                  name="is_featured"
+                  id="is_featured"
+                  value="1"
+                  {{default_checked.is_featured}}
+                />
+                <label for="is_featured">Is Featured?</label>
+              </div>
+              <div class="form-group">
+                <input
+                  type="checkbox"
+                  name="in_stock"
+                  id="in_stock"
+                  value="1"
+                  {{default_checked.in_stock}}
+                />
+                <label for="in_stock">In stock?</label>
+              </div>
+            </fieldset>
+            <!-- Filter by Categories  -->
+            {% if categories %}
+            <fieldset class="form-group border rounded-3 p-3 mt-3">
+              <legend class="float-none w-auto px-3">
+                Filter by Categories
+              </legend>
+              {% for category in categories%}
+              <div class="option-with-lable">
+                <input
+                  type="checkbox"
+                  name="cat"
+                  id="cat_{{category.id}}"
+                  value="{{category.id}}"
+                  {{category.id|defaultChecked:default_checked}}
+                />
+                <label for="cat_{{category.id}}">{{category.name}}</label>
+              </div>
+              {%endfor%}
+            </fieldset>
+            {%endif%}
+            <!-- Submit Button  -->
+            <div class="form-group form-container btn mt-3">
+              <button type="submit" class="btn btn-primary">Submit</button>
+              <a href="/" class="ms-2">
+                <button type="button" class="btn btn-secondary">Cancel</button>
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="row col-md-12">
+        {% for product in products %}
+        <div class="col-md-3">
+          <div class="product-card">
+            <div class="product-card-img">
+              {% if product.quantity > 0 %}
+              <label class="stock bg-success">In Stock</label>
+              {%else%}
+              <label class="stock bg-danger">Out of Stock</label>
+              {%endif%} {% if product.quantity > 0 %}
+              <label class="product-qty bg-warning"
+                ><strong>Qty:</strong> {{product.quantity}}</label
+              >
+              {%endif%}
+              <img src="/media/{{product.image}}" alt="{{product.name}}" />
+            </div>
+            <div class="product-card-body">
+              <p class="product-brand">{{product.category.name}}</p>
+              <h5 class="product-name">
+                <a href="/product/detail/{{product.slug}}">
+                  {{product.name}}
+                </a>
+              </h5>
+              <div>
+                <span class="selling-price"
+                  ><i class="fa fa-inr"></i> {{product.price}}</span
+                >
+                <span class="original-price"
+                  ><i class="fa fa-inr"></i> {{product.old_price}}</span
+                >
+              </div>
+              <div class="mt-2 d-flex">
+                <form method="post" action="/" class="col-md-6">
+                  {%csrf_token %}
+                  <input
+                    type="hidden"
+                    name="product_id"
+                    value="{{product.id}}"
+                  />
+                  <input type="hidden" name="qty" value="1" />
+                  {% if product.quantity > 0 %}
+                  <button type="submit" class="btn btn1">Add To Cart</button>
+                  {%else%}
+                  <button type="submit" class="btn btn1 disabled">
+                    Add To Cart
+                  </button>
+                  {%endif%}
+                </form>
+                <a
+                  href="/product/detail/{{product.slug}}"
+                  class="btn btn1 col-md-6"
+                >
+                  View
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor%}
+      </div>
+    </div>
+  </div>
+  {%endif%}
+</div>
+{% endblock %}

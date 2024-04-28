@@ -1,0 +1,126 @@
+{% extends 'common/base.html' %} {% block title %} Checkout {%endblock%} 
+{%block content %}
+
+<div class="py-3 py-md-4 bg-light">
+  <div class="container">
+    <div class="row checkout">
+      <h3 class="mb-3 main-title">Checkout</h3>
+      {%if severity == 'error'%}
+      <div class="alert alert-danger mt-3" role="alert">{{msg}}</div>
+      {% elif severity == 'success'%}
+      <div class="alert alert-success mt-3" role="alert">{{msg}}</div>
+      {% elif severity == 'warning'%}
+      <div class="alert alert-warning mt-3" role="alert">{{msg}}</div>
+      {% endif%} {%if total > 0%}
+      <div class="col-md-12 mb-4">
+        <div class="shadow bg-white p-3">
+          <h4 class="text-primary">
+            Item Total Amount :
+            <span class="float-end"><i class="fa fa-inr"></i>{{total}}</span>
+          </h4>
+          <hr />
+          <small>* Items will be delivered in 3 - 5 days.</small>
+          <br />
+          <small>* Tax and other charges are included ?</small>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div class="shadow bg-white p-3">
+          <h4 class="text-primary">Basic Information</h4>
+          <hr />
+          <form action="/checkout/" method="post">
+            <div class="row">
+              {% csrf_token %}
+              <input type="hidden" name="total_amount" value="{{total}}" />
+              {% for field in form %}
+              <div class="col-md-6 mb-3">
+                {{ field.label_tag }} {{ field }} {% for error in field.errors%}
+                <div class="alert alert-danger" role="alert">{{ error }}</div>
+                {% endfor %} {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+              </div>
+              {% endfor %}
+
+              <div class="col-md-12 mb-3">
+                <label>Select Payment Mode: </label>
+                <input
+                  type="hidden"
+                  name="payment_mode"
+                  id="payment_mode"
+                  value=""
+                />
+                <div class="d-md-flex align-items-start">
+                  <div
+                    class="nav col-md-3 flex-column nav-pills me-3"
+                    id="v-pills-tab"
+                    role="tablist"
+                    aria-orientation="vertical"
+                  >
+                    <button
+                      class="nav-link fw-bold"
+                      id="cashOnDeliveryTab-tab"
+                      data-bs-toggle="pill"
+                      data-bs-target="#cashOnDeliveryTab"
+                      type="button"
+                      role="tab"
+                      aria-controls="cashOnDeliveryTab"
+                      aria-selected="true"
+                      onclick="setPaymentMode('Cash on Delivery')"
+                    >
+                      Cash on Delivery
+                    </button>
+                    <button
+                      class="nav-link fw-bold"
+                      id="onlinePayment-tab"
+                      data-bs-toggle="pill"
+                      data-bs-target="#onlinePayment"
+                      type="button"
+                      role="tab"
+                      aria-controls="onlinePayment"
+                      aria-selected="false"
+                      onclick="setPaymentMode('Online')"
+                    >
+                      Online Payment
+                    </button>
+                  </div>
+                  <div class="tab-content col-md-9" id="v-pills-tabContent">
+                    <div
+                      class="tab-pane fade"
+                      id="cashOnDeliveryTab"
+                      role="tabpanel"
+                      aria-labelledby="cashOnDeliveryTab-tab"
+                      tabindex="0"
+                    >
+                      <h6>Cash on Delivery Mode</h6>
+                      <hr />
+                      <button type="submit" class="btn btn-primary">
+                        Place Order (Cash on Delivery)
+                      </button>
+                    </div>
+                    <div
+                      class="tab-pane fade"
+                      id="onlinePayment"
+                      role="tabpanel"
+                      aria-labelledby="onlinePayment-tab"
+                      tabindex="0"
+                    >
+                      <h6>Online Payment Mode</h6>
+                      <hr />
+                      <button type="submit" class="btn btn-warning">
+                        Pay Now (Online Payment)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      {%endif%}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
